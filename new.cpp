@@ -1,7 +1,11 @@
 #include <iostream>
 #include <fstream>
 
+
 using namespace std;
+
+void header();
+
 struct DOB
 {
 int date;
@@ -19,10 +23,11 @@ class Person
     string phone_no;
     string country;
     DOB dob;
+    
  
     
     public:
-
+    
     void signup()
     {ifstream in;
     ofstream out;
@@ -46,6 +51,8 @@ class Person
        password_saved=password2;
        cout<<"Please choose your country"<<endl;
        cin>>country;
+       
+       
 
     }
     void signin()
@@ -85,23 +92,63 @@ class Person
     }
     
 };
+
 class User:public Person
 {private:
 int bids=30;
 string option;
 public:
 User()
+{string reg;
+cout<<"Sign in \n Sign up \n Forgot password\n";
+cin>>reg;
+if(reg=="sign_in" ||reg=="Sign In")
 {
-cout<<"SIgn in \n Sign up \n Forgot password\n";
+     signin();
 }
+else if(reg=="sign up" ||reg=="Sign Up")
+{
+     signup();
+}
+else if(reg=="forgot password" ||reg=="Forgot Password")
+{
+     forgot_password();
+}
+else
+{
+header();
+}
+
+
+
+}
+
 };
 class Employer:public Person
 {
 string oragnization;
 
 };
- int main()
- { cout<<"ARE YOU A CLIENT OR A FREELANCER LOOKING FOR WORK"<<endl;
+void header()
+{
+    string user_type;
+    cout<<"JOBEEEEEEEE"<<endl;
+    cout<<"ARE YOU A FREELANCER OR A EMPLOYER LOOKING FOR A  FREELANCER?"<<endl;
+    cin>>user_type;
+    if(user_type=="FREELANCER")
+    {
+        User U;
+
+    }
+    else if(user_type == "EMPLOYEER")
+    {
+        Employer E;
+    }
+}
+
+ int main(){
+
+ header();
  
 
  }
