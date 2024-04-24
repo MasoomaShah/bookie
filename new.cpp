@@ -1,9 +1,20 @@
 #include <iostream>
 #include <fstream>
-
+int av_jobs_no=3;
+int sr_no;
 
 using namespace std;
-
+string available_jobs[]={"Cook","Engineer","Electrician"};
+string where_the_jobs_at[]={"Lahore","Islamabad","Karachi"};
+int no_of_vacancies[]={1,2,1};
+void display_job_vacancies()
+{for(int i=0;i<av_jobs_no;i++)
+   { cout<<"SR number"<<i<<endl;
+   cout<<"Vacancy for the Post of"<<"  "<<available_jobs[i]<<endl;
+   cout<<"Location"<<"  "<<where_the_jobs_at[i]<<endl;
+   cout<<"Number of vacancies left"<<"  "<<no_of_vacancies[i]<<endl;
+   }
+}
 void header();
 
 struct DOB
@@ -98,6 +109,7 @@ class User:public Person
 int bids=30;
 string option;
 public:
+
 User()
 {string reg;
 cout<<"Sign in \n Sign up \n Forgot password\n";
@@ -118,6 +130,11 @@ else
 {
 header();
 }
+display_job_vacancies();
+cout<<"Plaese enter sr.no of the job you wish to apply for"<<endl;
+cin>>sr_no;
+
+
 
 
 
@@ -125,10 +142,57 @@ header();
 
 };
 class Employer:public Person
-{
+{public:
 string oragnization;
+friend void appliction();
+Employer()
+{string reg;
+cout<<"Sign in \n Sign up \n Forgot password\n";
+cin>>reg;
+if(reg=="sign_in" ||reg=="Sign In")
+{
+     signin();
+}
+else if(reg=="sign up" ||reg=="Sign Up")
+{
+     signup();
+}
+else if(reg=="forgot password" ||reg=="Forgot Password")
+{
+     forgot_password();
+}
+else
+{
+header();
+}
 
 };
+void appliction()
+{bool Status;
+cout<<"Someone has applied for the position"<<endl;
+cout<<available_jobs[sr_no]<<endl;
+cout<<where_the_jobs_at[sr_no]<<endl;
+cout<<no_of_vacancies[sr_no]<<endl;
+cout<<"Do you approve?"<<endl;
+cin>>Status;
+if(Status==1)
+{
+      
+no_of_vacancies[sr_no]--;
+if(no_of_vacancies[sr_no]==0)
+{
+for(int j=0;j<av_jobs_no;j++)
+    {available_jobs[j]=available_jobs[j+1];
+    where_the_jobs_at[j]=where_the_jobs_at[j+1];
+    no_of_vacancies[j]=no_of_vacancies[j+1];
+    av_jobs_no--;}
+    }
+
+}
+
+
+}}
+
 void header()
 {
     string user_type;
@@ -137,7 +201,7 @@ void header()
     cin>>user_type;
     if(user_type=="FREELANCER")
     {
-        User U;
+        User U1;
 
     }
     else if(user_type == "EMPLOYEER")
