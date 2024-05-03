@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+
 int av_jobs_no=3;
 int sr_no;
 
@@ -16,6 +17,7 @@ void display_job_vacancies()
    }
 }
 void header();
+
 
 struct DOB
 {
@@ -68,7 +70,8 @@ class Person
     }
     void signin()
     {
-        cout<<"enter email";
+        
+        cout << "enter email";
         cin>>email;
         cout<<"enter password";
         cin>>password1;
@@ -106,9 +109,11 @@ class Person
 
 class User:public Person
 {private:
+string resume;
 int bids=30;
 string option;
 public:
+friend int calculate_bids();
 
 User()
 {string reg;
@@ -133,6 +138,9 @@ header();
 display_job_vacancies();
 cout<<"Plaese enter sr.no of the job you wish to apply for"<<endl;
 cin>>sr_no;
+cout<<"upload resume"<<endl;
+cin>>resume;
+
 
 
 
@@ -142,7 +150,11 @@ cin>>sr_no;
 
 };
 class Employer:public Person
-{public:
+{private:
+string job_title;
+int available_bids;
+int rank;
+public:
 string oragnization;
 friend void appliction();
 Employer()
@@ -166,7 +178,18 @@ else
 header();
 }
 
+
+available_bids=calculate_bids();
+
+
 };
+void add_a_job()
+{
+cout<<"Enter jon title"<<endl;
+cin>>job_title;
+cout<<"enter rank"<<endl;
+cin>>rank;
+}
 void appliction()
 {bool Status;
 cout<<"Someone has applied for the position"<<endl;
@@ -191,7 +214,21 @@ for(int j=0;j<av_jobs_no;j++)
 }
 
 
-}}
+}
+int calculate_bids()
+{
+    if (rank==5)
+   { return 100;}
+     if (rank==4)
+   { return 70;}
+     if (rank==3)
+   { return 50;}
+     if (rank==2)
+   { return 25;}
+     if (rank==1)
+   { return 10;}
+}};
+
 
 void header()
 {
@@ -209,6 +246,8 @@ void header()
         Employer E;
     }
 }
+
+
 
  int main(){
 
