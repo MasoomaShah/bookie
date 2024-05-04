@@ -105,7 +105,7 @@ class Person
         
     }
     
-};
+
 
 class User:public Person
 {private:
@@ -114,6 +114,17 @@ int bids=30;
 string option;
 public:
 friend int calculate_bids();
+string search;
+void search_job (string &s)
+{
+
+for(int j=0;j<av_jobs_no;j++)
+    {
+      if(search==available_jobs[j])
+      {
+void display_job_vacancies();
+      }
+}}};
 
 User()
 {string reg;
@@ -136,6 +147,7 @@ else
 header();
 }
 display_job_vacancies();
+search_job (search);
 cout<<"Plaese enter sr.no of the job you wish to apply for"<<endl;
 cin>>sr_no;
 cout<<"upload resume"<<endl;
@@ -143,12 +155,12 @@ cin>>resume;
 
 
 
-
-
-
 }
 
-};
+
+
+
+;
 class Employer:public Person
 {private:
 string job_title;
