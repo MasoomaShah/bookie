@@ -1,11 +1,13 @@
-#include <iostream>
-#include <fstream>
+#include<iostream>
+#include<vector>
+#include<fstream>
 #include<string>
+#include<Cstdlib>
 
 using namespace std;
-
 int user=0;
 int bids = 30;
+
 class Job{
 	public:
     string title;
@@ -13,36 +15,34 @@ class Job{
     string type;
     string city;
     string country;
-    int requiredBids;
+    string salary;
+    string requiredBids;
 
-    void displayDetails() {
-        cout << "Title: " << title << endl;
-        cout << "Description: " << description << endl;
-        cout << "Type: " << type << endl;
-        cout << "City: " << city << endl;
-        cout << "Country: " << country << endl;
-        cout << "Required Bids: " << requiredBids << endl;
-    }
-    void displayJobs(){
-        cout << "Title: " << title << endl;
-        cout << "Description: " << description << endl;
-        cout << "Type: " << type << endl;
-        cout << "City: " << city << endl;
-        cout << "Country: " << country << endl;
-        cout << "Required Bids: " << requiredBids << endl;
+    void displayJobs(Job &job) {
     	
+        cout << "Title: " << job.title << endl;
+        cout << "Type: " << job.type << endl;
+        cout << "City: " << job.city << endl;
+        cout << "Country: " << job.country << endl;
+        cout << "Required Bids: " << job.requiredBids << endl;
+        cout << "Salary: " << job.salary << endl;
+        cout << "Description: " << job.description << endl;
+        cout << endl;
+        
+    
+}
+	string getTitle(){
+		return title;
 	}
 	void displayStatus(){
-		cout<<"STatus"<<endl;
+		cout<<"Status"<<endl;
 	}
 };
 
-
-struct DOB
-{
-int date;
-int month;
-int year;
+struct DOB{
+	int day;
+	int month;
+	int year;
 };
 class Person{
 	public:
@@ -58,7 +58,6 @@ class Person{
     	friend int header();
 };
 
-
 class Finder: public Person, public Job{
 	//definition
 	protected:
@@ -66,9 +65,11 @@ class Finder: public Person, public Job{
 	string qualification;
 	public:
 		void displayProfile();
-		Finder(){
-			bids=30;
-		}
+		void displayJobListings();
+		void submitBid(Job& job); // Method to submit a bid for a job
+		int getAvailableBids();
+		void applyJob(string &usr,const string &jobTitle);
+		Finder(){}
     Finder(const string & usr,const string &qual){
     	username = usr;
     	qualification=qual;
@@ -76,18 +77,92 @@ class Finder: public Person, public Job{
     	displayProfile();
 	}
 };
+
+void Finder:: applyJob(string &usr,const string &jobTitle){
+	ifstream read;
+	read.open("JOBS.txt");
+	string JOBTITLE,jobType,jobCity,jobCountry,requiredBids,jobsalary,jobdescr;
+	JOBTITLE=jobTitle;
+	read>>JOBTITLE>>jobType>>jobCity>>jobCountry>>requiredBids>>jobsalary>>jobdescr;
+	getline(read,JOBTITLE,',');
+	getline(read,jobType,',');
+	getline(read,jobCity,',');
+	getline(read,jobCountry,',');
+	getline(read,requiredBids,',');
+	getline(read,jobsalary,',');
+	getline(read,jobdescr);
+	int requiredBidsInt = atoi(requiredBids.c_str());
+	Finder F;
+	if (requiredBidsInt<=F.bids){
+		string c_l;
+		Job job;
+		cout<<"Write your cover letter here: ";
+		getline(cin,c_l);
+		ofstream out;
+		out.open("APPLIED.txt",ios::app);
+		out<<username <<","<<JOBTITLE<<","<<jobType<<","<<jobCity<<","<<jobCountry<<","<<requiredBids<<","<<jobsalary<<","<<jobdescr;
+		submitBid(job);
+	
+		
+	}
+	else{
+		cout<<"YOU DON'T have ENough bids!"<<endl<<endl;
+	}
+	
+	
+	
+}
+void Finder::displayJobListings() {
+    ifstream file("JOBS.txt"); // Assuming the file is in CSV format
+    if (file.is_open()) {
+        while (true) {
+            Job job;
+            // Read job information
+            getline(file,username,',');
+            getline(file, job.title, ',');
+              // Exit the loop if end of file is reached
+            getline(file, job.type, ',');
+            getline(file, job.city, ',');
+            getline(file, job.country, ',');
+            getline(file, job.requiredBids, ',');
+            getline(file, job.salary, ','); // Ignore the comma after requiredBids
+            
+            file.ignore(); // Ignore the comma after salary
+            // Read the job description (including spaces)
+            getline(file >> ws, job.description);
+            // Display the job information
+            job.displayJobs(job);
+            if (file.eof()) break;
+        }
+        file.close();
+    } else {
+        cout << "Unable to open JOBS.txt file." << endl;
+    }
+}
 void Finder::displayProfile(){
         cout << "Username: " <<username << endl;
         cout << "Bids: " << bids << endl;
         cout<<"Your Qualification: "<<qualification<<endl;
-        cout<<"DOU YOU WANT TO BROWSE JOBS?(1)/n or SEE YOUR APPLICATIONS STATUS?(2) ";
+        cout<<"DOU YOU WANT TO BROWSE JOBS?(1)/n or SEE YOUR APPLICATIONS STATUS?(2)DOU WANT TO SEARCH JOJS BY FILTER?(3) ";
         int choice;
         cin>>choice;
         if (choice==1){
-        	displayJobs();
+        	displayJobListings();
+        	string JOBTITLE;
+        	cout<<"Enter the job title you want to apply for: ";
+        	cin.ignore();
+        	getline(cin,JOBTITLE);
+			applyJob(username, JOBTITLE);
+			
+        	
 		}
 		else if(choice==2){
 			displayStatus();
+		}
+		else if(choice==3){
+			cout<<"enter keyword: "<<endl;
+			string keyword;
+			//vector<Job> filteredJobs = searchJobs(keyword);
 		}
 		else
 		{
@@ -96,10 +171,29 @@ void Finder::displayProfile(){
 		}
 		
 		}
+    
+    void Finder::submitBid(Job& job) {
+    	Finder F;
+    int requiredBidsInt = atoi(requiredBids.c_str());
+    if (F.bids >= requiredBidsInt) {
+        cout << "Bid submitted for job: " << job.title << endl;
+        F.bids -= requiredBidsInt; 
+        	ifstream in;
+		in.open("freelancer.txt",ios::app);
+		
+    } else {
+        cout << "You do not have enough available bids to submit for this job." << endl;
+    }
+}
 
-class Poster: public Person{
+int Finder::getAvailableBids() {
+	return bids;
+}
+
+class Poster: public Person,public Job{
 	//definition
 	public:
+		
 		void viewPostedJobs(string & username);
 		void postJob(string &username);
 	Poster(string &username) {
@@ -128,6 +222,39 @@ class Poster: public Person{
 		}
     }
 };
+vector<Job> searchJobs( string& keyword) {
+    ifstream file("JOBS.txt"); 
+    vector<Job> filteredJobs;
+
+    if (file.is_open()) {
+        while (!file.eof()) {
+            Job job;
+            getline(file, job.title, ',');
+            getline(file, job.type, ',');
+            getline(file, job.city, ',');
+            getline(file, job.country, ',');
+            getline(file, job.requiredBids, ',');
+            getline(file, job.salary, ','); 
+            
+            file.ignore(); // Ignore the comma after salary
+            getline(file >> ws, job.description);
+
+            // If any field contains the keyword, add it to the filtered jobs
+            if (job.title.find(keyword) != string::npos ||
+                job.type.find(keyword) != string::npos ||
+                job.city.find(keyword) != string::npos ||
+                job.country.find(keyword) != string::npos ||
+                job.description.find(keyword) != string::npos) {
+                filteredJobs.push_back(job);
+            }
+        }
+        file.close();
+    } else {
+        cout << "Unable to open JOBS.txt file." << endl;
+    }
+    return filteredJobs;
+}
+
 void Poster::postJob(string &username){
 	ofstream jobFile;
 	jobFile.open("JOBS.txt",ios::app);
@@ -136,9 +263,10 @@ void Poster::postJob(string &username){
 		return;
 	}
 	string jobTitle,jobType,jobCity,jobCountry,jobDescription;
+	double jobSalary;
 	int requiredBids;
 	cout << "Enter job title: ";
-    cin.ignore(); // Clear input buffer
+    cin.ignore(); 
     getline(cin, jobTitle);
 
     cout << "Enter job type: ";
@@ -153,12 +281,14 @@ void Poster::postJob(string &username){
     cout << "Enter required bids: ";
     cin >> requiredBids;
     
+    cout<<"Enter the job budget: $";
+    cin>>jobSalary;
+    
     cout << "Enter job description: ";
-    cin.ignore(); // Clear input buffer
+    cin.ignore(); 
     getline(cin, jobDescription);
     
-    jobFile << username <<endl;
-	jobFile << jobTitle << " " << jobType << " " << jobCity << " " << jobCountry << " " << requiredBids << " " << jobDescription << endl;
+	jobFile<<username<<"," << jobTitle << "," << jobType << "," << jobCity << "," << jobCountry << "," << requiredBids <<","<<jobSalary<< "," << jobDescription << endl;
     
     cout<<"JOB POSTED SUCCESSFULLY!"<<endl;
     
@@ -176,19 +306,25 @@ void Poster::viewPostedJobs(string& username) {
     cout << "Your Posted Jobs:" << endl;
 
     string employerusername, jobTitle, jobType, jobCity, jobCountry, jobDescription;
-    int requiredBids;
+    string requiredBids, salary;
 
-    // Read each line of the file
-     bool found = false;
-
-    do {
-    	jobFile >> employerusername >> jobTitle >> jobType >> jobCity >> jobCountry >> requiredBids;
+    while (!jobFile.eof()) {
+        getline(jobFile,employerusername,',');
         
+        getline(jobFile,jobTitle,',');
+        
+        getline(jobFile,jobType,',');
+        
+        getline(jobFile,jobCity,',');
+        
+        getline(jobFile,jobCountry,',');
+        
+        getline(jobFile,requiredBids,',');
+        
+        getline(jobFile,salary,',');
+        getline(jobFile, jobDescription);
+
         if (employerusername == username) {
-            found = true;
-            // Read job description (including spaces)
-            getline(jobFile, jobDescription);
-			
             cout << "Job Title: " << jobTitle << endl;
             cout << "Job Type: " << jobType << endl;
             cout << "Job City: " << jobCity << endl;
@@ -196,29 +332,17 @@ void Poster::viewPostedJobs(string& username) {
             cout << "Required Bids: " << requiredBids << endl;
             cout << "Job Description: " << jobDescription << endl;
             cout << "--------------------------------------" << endl;
-            
         }
-    
-       
-        else {
-            // Skip the job description line
-            string temp;
-            getline(jobFile, temp);
-        }
-        
-    }
-     while (jobFile >> employerusername >> jobTitle >> jobType >> jobCity >> jobCountry >> requiredBids);
 	
-    // Check if no jobs were found for the given username
-    if (!jobFile.eof()) {
+    if (jobFile.eof()) {
         cout << "You haven't posted any jobs yet." << endl;
     }
 
-    jobFile.close();
+    
 }
-
+jobFile.close();
+}
 int header();
-vector<Job> loadJobsFromFile();
 void displayJobListings(const vector<Job>& jobs);
 
 int header(){
@@ -239,10 +363,11 @@ int header(){
 }
 
 int login(){
-	//definition
+	
 	ofstream out;
 	ifstream in;
 	header();
+	
 	while(user==1){
 		
         int n;
@@ -258,7 +383,7 @@ int login(){
 		
 		else if(n == 1)
 		{
-    out.open("freelancer.txt", ios::app); // Open file in append mode
+    out.open("freelancer.txt", ios::app); 
     if (!out.is_open()) {
         cerr << "Error: Unable to open file for writing." << endl;
         continue; // Return to menu if unable to open file
@@ -277,7 +402,7 @@ int login(){
     cin >> qualification;
      // Initialize bids
     out << P.username << " " << P.password << " " << P.dob.day << " " << qualification << " " <<bids << endl;
-    out.close(); // Close the file after writing
+    out.close(); 
     cout << "\n\nCredentials have been added into DataBase Successfully!\n\n";
 }
 		
@@ -286,7 +411,7 @@ int login(){
     in.open("freelancer.txt");
     if (!in.is_open()) {
         cerr << "Error: Unable to open file for reading." << endl;
-        continue; // Return to menu if unable to open file
+        continue; 
     }
     string inputUsername, inputPassword;
     cout << "\n\nWe are in Customer LOG IN Page\n\n";
@@ -313,13 +438,12 @@ int login(){
     cin >> inputPassword;
 if (password == inputPassword) {
     cout << "\n\nLOG IN Successfully!\n\n";
-    // User type object // Convert string to integer
     Finder F1(username, qualification);
 }
 	else {
         cout << "\n\nIncorrect Password!\n\n";
     }
-    in.close(); // Close the file after reading
+    in.close();
 }
 }
 while(user==2){
@@ -359,6 +483,7 @@ while(user==2){
 		if(n==2)
 		{
 			in.open ("employer.txt");
+			in.seekg(0, ios::beg);
 			string inputUsername, inputPassword;
 			cout<<"\n\nWe are in employer LOG IN Page\n\n";
 			cout<<"Enter Username: ";
@@ -404,7 +529,10 @@ while(user==2){
 		}
 	}
 }
+
+
 int main(){
-   login();
+	
+	login();
 }
 
