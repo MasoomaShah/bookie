@@ -1,7 +1,7 @@
 #include<iostream>
 #include<vector>
 #include<fstream>
-#include<string>
+#include<string> 
 #include<Cstdlib>
 
 using namespace std;
@@ -66,7 +66,7 @@ class Finder: public Person, public Job{
 	public:
 		void displayProfile();
 		void displayJobListings();
-		void submitBid(Job& job); // Method to submit a bid for a job
+		void submitBid(Job& job); 
 		int getAvailableBids();
 		void applyJob(string &usr,const string &jobTitle);
 		Finder(){}
@@ -109,28 +109,27 @@ void Finder:: applyJob(string &usr,const string &jobTitle){
 		cout<<"YOU DON'T have ENough bids!"<<endl<<endl;
 	}
 	
-	
-	
+		
 }
 void Finder::displayJobListings() {
-    ifstream file("JOBS.txt"); // Assuming the file is in CSV format
+    ifstream file("JOBS.txt"); 
     if (file.is_open()) {
         while (true) {
             Job job;
-            // Read job information
+            
             getline(file,username,',');
             getline(file, job.title, ',');
-              // Exit the loop if end of file is reached
+            
             getline(file, job.type, ',');
             getline(file, job.city, ',');
             getline(file, job.country, ',');
             getline(file, job.requiredBids, ',');
-            getline(file, job.salary, ','); // Ignore the comma after requiredBids
+            getline(file, job.salary, ','); 
             
-            file.ignore(); // Ignore the comma after salary
-            // Read the job description (including spaces)
+            file.ignore(); 
+            
             getline(file >> ws, job.description);
-            // Display the job information
+            
             job.displayJobs(job);
             if (file.eof()) break;
         }
@@ -139,6 +138,7 @@ void Finder::displayJobListings() {
         cout << "Unable to open JOBS.txt file." << endl;
     }
 }
+vector<Job> searchJobs(const string &keyword);
 void Finder::displayProfile(){
         cout << "Username: " <<username << endl;
         cout << "Bids: " << bids << endl;
@@ -162,7 +162,8 @@ void Finder::displayProfile(){
 		else if(choice==3){
 			cout<<"enter keyword: "<<endl;
 			string keyword;
-			//vector<Job> filteredJobs = searchJobs(keyword);
+			cin>>keyword;
+			vector<Job> filteredJobs = searchJobs(keyword);
 		}
 		else
 		{
@@ -185,13 +186,12 @@ void Finder::displayProfile(){
         cout << "You do not have enough available bids to submit for this job." << endl;
     }
 }
-
 int Finder::getAvailableBids() {
 	return bids;
 }
 
 class Poster: public Person,public Job{
-	//definition
+	
 	public:
 		
 		void viewPostedJobs(string & username);
@@ -222,7 +222,7 @@ class Poster: public Person,public Job{
 		}
     }
 };
-vector<Job> searchJobs( string& keyword) {
+vector<Job> searchJobs(const string &keyword) {
     ifstream file("JOBS.txt"); 
     vector<Job> filteredJobs;
 
@@ -236,10 +236,10 @@ vector<Job> searchJobs( string& keyword) {
             getline(file, job.requiredBids, ',');
             getline(file, job.salary, ','); 
             
-            file.ignore(); // Ignore the comma after salary
+            file.ignore(); 
             getline(file >> ws, job.description);
 
-            // If any field contains the keyword, add it to the filtered jobs
+            
             if (job.title.find(keyword) != string::npos ||
                 job.type.find(keyword) != string::npos ||
                 job.city.find(keyword) != string::npos ||
@@ -386,7 +386,7 @@ int login(){
     out.open("freelancer.txt", ios::app); 
     if (!out.is_open()) {
         cerr << "Error: Unable to open file for writing." << endl;
-        continue; // Return to menu if unable to open file
+        continue; 
     }
     Person P;
     string qualification;
@@ -535,4 +535,3 @@ int main(){
 	
 	login();
 }
-
